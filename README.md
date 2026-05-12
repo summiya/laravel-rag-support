@@ -1,54 +1,57 @@
-#  AI RAG Support System
+# 🌟 AI RAG Support System
+
+![Laravel](https://img.shields.io/badge/Laravel-13.x-red?logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.5-blue?logo=php&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-local-green)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 AI-powered support assistant built with Laravel, Ollama, PostgreSQL, pgvector, and Retrieval-Augmented Generation (RAG).
 
 ---
 
-# Overview
+## 🚀 Overview
 
- RAG is a scalable AI support platform designed to provide intelligent, context-aware customer support using local LLMs and vector search.
+This project is a scalable AI support platform designed to provide intelligent, context-aware customer support using local LLMs and vector search.
 
-The system combines:
+Key capabilities include:
 
 - Laravel backend architecture
 - Local LLM inference using Ollama + Llama
 - PostgreSQL with pgvector
 - Retrieval-Augmented Generation (RAG)
-- Semantic search
-- Document ingestion pipelines
+- Semantic search and document retrieval
 - AI-powered conversational support
 
-The goal is to create a production-ready AI support infrastructure that can scale from a local development environment to enterprise-grade deployments.
+> Built to work locally and scale toward enterprise-grade deployments.
 
 ---
 
-# Features
+## ✨ Features
 
-## AI Support Chat
-- Conversational AI support assistant
+### AI Support Chat
+- Conversational support assistant
 - Real-time chat interface
 - Context-aware responses
-- Session-based conversations
+- Clean support UI with vanilla JavaScript
 
-## RAG (Retrieval-Augmented Generation)
+### RAG (Retrieval-Augmented Generation)
 - Semantic document retrieval
 - Vector similarity search
-- Context injection into prompts
+- Prompt context injection
 - Grounded AI responses using business data
 
-## Local AI Infrastructure
-- Runs locally using Ollama
-- No external AI API required
+### Local AI Infrastructure
+- Runs locally with Ollama
+- No external AI API dependency
 - Privacy-friendly architecture
 - Reduced operational cost
 
-## Scalable Architecture
-- Queue-based document processing
-- Chunked ingestion pipelines
-- Modular service architecture
+### Scalable Architecture
+- Queue-based processing
+- Modular services
 - Extensible vector search layer
 
-## Knowledge Base
+### Knowledge Base
 - Support documentation indexing
 - FAQ ingestion
 - Product documentation support
@@ -56,32 +59,32 @@ The goal is to create a production-ready AI support infrastructure that can scal
 
 ---
 
-# Tech Stack
+## 🧰 Tech Stack
 
-## Backend
+### Backend
 - Laravel
 - PHP 8+
 
-## AI / LLM
+### AI / LLM
 - Ollama
 - Llama 3
 
-## Database
+### Database
 - PostgreSQL
 - pgvector
 
-## Frontend
+### Frontend
 - Blade
 - Vanilla JavaScript
 
-## Infrastructure
+### Infrastructure
 - Laravel Queues
 - Background Jobs
 - REST APIs
 
 ---
 
-# Architecture
+## 🏗 Architecture
 
 ```text
 User Question
@@ -103,7 +106,7 @@ AI Response
 
 ---
 
-# Project Structure
+## 📁 Project Structure
 
 ```text
 app/
@@ -131,34 +134,34 @@ database/
 
 ---
 
-# Planned Components
+## 📌 Planned Components
 
-## Chat System
+### Chat System
 - AI support interface
 - Conversation memory
 - Multi-session support
 - Streaming responses
 
-## Vector Search Engine
+### Vector Search Engine
 - pgvector integration
 - Embedding indexing
 - Top-K similarity search
 - Metadata filtering
 
-## Embedding Pipeline
+### Embedding Pipeline
 - Document chunking
 - Embedding generation
 - Background indexing jobs
 - Queue processing
 
-## Knowledge Base Management
+### Knowledge Base Management
 - File uploads
 - PDF ingestion
 - Markdown ingestion
 - HTML extraction
 - CMS synchronization
 
-## AI Prompt Layer
+### AI Prompt Layer
 - Prompt templates
 - Context injection
 - System prompt management
@@ -166,9 +169,9 @@ database/
 
 ---
 
-# Scalability Goals
+## 📈 Scalability Goals
 
-The platform is designed for future scaling:
+This platform is built for future scale:
 
 - Multi-tenant support
 - Distributed vector infrastructure
@@ -180,24 +183,38 @@ The platform is designed for future scaling:
 
 ---
 
-# Local Development Setup
+## 💻 Local Development Setup
 
-## Install Ollama
+### Install Ollama
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
-## Pull Llama Model
+### Pull Llama Model
 
 ```bash
 ollama pull llama3
 ```
 
-## Run Ollama
+### Run Ollama
 
 ```bash
 ollama run llama3
+```
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 ```
 
 ---
