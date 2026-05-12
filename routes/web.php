@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\SupportChatController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
-use App\Http\Controllers\SupportChatController;
 
 Route::inertia('/', 'Welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -15,5 +15,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Support chat routes
 Route::get('/support', [SupportChatController::class, 'index']);
 Route::post('/support/chat', [SupportChatController::class, 'chat']);
+Route::post('/support/clear', [SupportChatController::class, 'clear']);
 
 require __DIR__.'/settings.php';

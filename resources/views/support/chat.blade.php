@@ -7,123 +7,228 @@
     <title>AI Support Chat</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 24px;
+            background-color: #f2f6fb;
+            color: #1f2937;
         }
+
+        h1 {
+            margin-bottom: 16px;
+            font-size: 2rem;
+            letter-spacing: -0.03em;
+        }
+
         .chat-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            padding: 24px;
         }
-        .chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            padding: 10px;
-            margin-bottom: 20px;
-            background-color: #fafafa;
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 18px;
         }
-        .message {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
+
+        .chat-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111827;
         }
-        .user-message {
-            background-color: #007bff;
-            color: white;
-            text-align: right;
-        }
-        .ai-message {
-            background-color: #e9ecef;
-            color: #333;
-        }
-        .input-group {
+
+        .chat-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
-        textarea {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            resize: vertical;
+
+        .chat-messages {
+            min-height: 360px;
+            max-height: 540px;
+            overflow-y: auto;
+            padding: 16px;
+            background-color: #eef4ff;
+            border-radius: 18px;
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        button {
-            padding: 10px 20px;
-            background-color: #28a745;
+
+        .message {
+            max-width: 78%;
+            padding: 14px 16px;
+            border-radius: 18px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .user-message {
+            margin-left: auto;
+            background-color: #2563eb;
             color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ai-message {
+            background-color: white;
+            color: #111827;
+            border-bottom-left-radius: 6px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .placeholder {
+            color: #475569;
+            font-style: italic;
+            text-align: center;
+            padding: 32px 16px;
+        }
+
+        .input-panel {
+            margin-top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: 14px 16px;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            background-color: white;
+            color: #111827;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
             border: none;
-            border-radius: 4px;
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-weight: 700;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
+
+        button[type='submit'] {
+            background-color: #2563eb;
+            color: white;
         }
+
+        button#clear-button {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
         button:disabled {
-            background-color: #6c757d;
+            opacity: 0.55;
             cursor: not-allowed;
         }
+
         .loading {
-            display: none;
-            color: #666;
+            color: #475569;
+            font-size: 0.95rem;
             font-style: italic;
         }
+
         .error {
-            color: #dc3545;
-            margin-top: 10px;
+            color: #b91c1c;
+            font-size: 0.95rem;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
     <h1>AI Support Chat</h1>
+
     <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-title">Support conversation</div>
+            <div class="chat-actions">
+                <button id="clear-button" type="button">Clear chat</button>
+            </div>
+        </div>
+
         <div id="chat-messages" class="chat-messages">
-            <!-- Chat messages will appear here -->
+            @if ($messages->isEmpty())
+                <div class="placeholder">Start the conversation by asking a question. Your previous messages will appear here.</div>
+            @else
+                @foreach ($messages as $message)
+                    <div class="message {{ $message->role === 'user' ? 'user-message' : 'ai-message' }}">
+                        {!! nl2br(e($message->content)) !!}
+                    </div>
+                @endforeach
+            @endif
         </div>
-        <div class="input-group">
-            <textarea id="message-input" placeholder="Type your message here..." rows="3"></textarea>
-            <button id="send-button" onclick="sendMessage()">Send</button>
+
+        <div class="input-panel">
+            <textarea id="message-input" placeholder="Type your message here..." rows="4"></textarea>
+            <div class="controls">
+                <button id="send-button" type="button">Send message</button>
+                <span id="loading" class="loading">AI is thinking...</span>
+            </div>
+            <div id="error" class="error"></div>
         </div>
-        <div id="loading" class="loading">AI is thinking...</div>
-        <div id="error" class="error"></div>
     </div>
 
     <script>
-        // Function to add a message to the chat
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const clearButton = document.getElementById('clear-button');
+        const loadingText = document.getElementById('loading');
+        const errorText = document.getElementById('error');
+
+        function scrollMessagesToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function setPlaceholder() {
+            messagesContainer.innerHTML = '<div class="placeholder">Your conversation is empty. Send a message to get started.</div>';
+        }
+
         function addMessage(content, type) {
-            const messagesDiv = document.getElementById('chat-messages');
+            const placeholder = messagesContainer.querySelector('.placeholder');
+
+            if (placeholder) {
+                placeholder.remove();
+            }
+
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}-message`;
             messageDiv.textContent = content;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+            messagesContainer.appendChild(messageDiv);
+            scrollMessagesToBottom();
         }
 
-        // Function to send message via AJAX
         async function sendMessage() {
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-button');
-            const loadingDiv = document.getElementById('loading');
-            const errorDiv = document.getElementById('error');
-
             const message = messageInput.value.trim();
-            if (!message) return;
 
-            // Clear previous error
-            errorDiv.textContent = '';
+            if (!message) {
+                return;
+            }
 
-            // Add user message to chat
-            addMessage(message, 'user');
-
-            // Clear input and disable button
-            messageInput.value = '';
+            errorText.textContent = '';
             sendButton.disabled = true;
-            loadingDiv.style.display = 'block';
+            loadingText.style.display = 'inline';
+
+            addMessage(message, 'user');
+            messageInput.value = '';
 
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -131,36 +236,67 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
+                        'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ message }),
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Add AI response to chat
                     addMessage(data.answer, 'ai');
                 } else {
-                    // Show error
-                    errorDiv.textContent = data.error || 'An error occurred.';
+                    errorText.textContent = data.error || 'Unable to get a response from the AI service.';
                 }
             } catch (error) {
-                errorDiv.textContent = 'Network error. Please try again.';
+                errorText.textContent = 'Network error. Please try again.';
             } finally {
-                // Re-enable button and hide loading
                 sendButton.disabled = false;
-                loadingDiv.style.display = 'none';
+                loadingText.style.display = 'none';
             }
         }
 
-        // Allow sending message with Enter key
-        document.getElementById('message-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
+        async function clearChat() {
+            errorText.textContent = '';
+            sendButton.disabled = true;
+            clearButton.disabled = true;
+
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const response = await fetch('/support/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({}),
+                });
+
+                if (response.ok) {
+                    setPlaceholder();
+                } else {
+                    const data = await response.json();
+                    errorText.textContent = data.error || 'Unable to clear the conversation.';
+                }
+            } catch (error) {
+                errorText.textContent = 'Network error while clearing the chat.';
+            } finally {
+                sendButton.disabled = false;
+                clearButton.disabled = false;
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        clearButton.addEventListener('click', clearChat);
+
+        messageInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
                 sendMessage();
             }
         });
+
+        scrollMessagesToBottom();
     </script>
 </body>
 </html>

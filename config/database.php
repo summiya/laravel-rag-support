@@ -64,6 +64,21 @@ return [
             ]) : [],
         ],
 
+        'ai_pgsql' => [
+            'driver' => 'pgsql',
+            'url' => env('AI_DATABASE_URL'),
+            'host' => env('AI_DB_HOST', '127.0.0.1'),
+            'port' => env('AI_DB_PORT', '5432'),
+            'database' => env('AI_DB_DATABASE', 'postgres'),
+            'username' => env('AI_DB_USERNAME', 'postgres'),
+            'password' => env('AI_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

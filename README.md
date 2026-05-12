@@ -258,6 +258,33 @@ php artisan key:generate
 php artisan migrate
 ```
 
+---
+
+## 🔁 Returns Policy
+
+This project is provided as-is for development and evaluation purposes. There is no built-in commercial returns policy, but you can adapt the implementation and legal terms to match your own product or service requirements.
+
+If you plan to offer this application to customers, add a custom return and refund policy document that clearly defines your support, delivery, and satisfaction terms.
+
+---
+
+## ❓ Frequently Asked Questions
+
+### What does this repo do?
+It provides a local AI support system built with Laravel, Ollama, PostgreSQL, and an extensible RAG foundation.
+
+### How do I start the app?
+Run `composer install`, configure `.env`, run `php artisan migrate`, and start the app with `php artisan serve`. Use `ollama run llama3` for the model.
+
+### Where are conversations stored?
+Support chat history is stored in database tables via session-backed conversation memory.
+
+### How do I index documents for RAG?
+Use `php artisan rag:index-document` to add a document and automatically store its chunks in the `ai_pgsql` database.
+
+### Can I change the Ollama model?
+Yes. The code is modular so you can swap the model name or provider later without changing the chat UI.
+
 ## Start Laravel
 
 ```bash

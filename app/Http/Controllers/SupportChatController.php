@@ -2,70 +2,128 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 
 class SupportChatController extends Controller
 {
     /**
-     * Display the support chat page.
+     * Display the support chat page with persistent session memory.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('support.chat');
+        $sessionId = $request->session()->getId();
+
+        $conversation = Conversation::firstOrCreate(
+            ['session_id' => $sessionId],
+            ['user_id' => Auth::id(), 'title' => null]
+        );
+
+        $messages = $conversation->messages()->get();
+
+        return view('support.chat', [
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ]);
     }
 
     /**
-     * Handle the chat request to the AI API.
+     * Handle the chat request and persist user/assistant history.
      */
     public function chat(Request $request)
     {
         try {
-            // Validate the incoming message
             $request->validate([
                 'message' => 'required|string|max:4000',
             ]);
 
+            $sessionId = $request->session()->getId();
+
+            $conversation = Conversation::firstOrCreate(
+                ['session_id' => $sessionId],
+                ['user_id' => Auth::id(), 'title' => null]
+            );
+
             $userMessage = $request->input('message');
 
-            // Prepare the request body for Ollama API
+            $conversation->messages()->create([
+                'role' => 'user',
+                'content' => $userMessage,
+            ]);
+
+            $history = $conversation->messages()
+                ->latest('created_at')
+                ->limit(10)
+                ->get()
+                ->reverse()
+                ->values();
+
+            $payloadMessages = collect([
+                [
+                    'role' => 'system',
+                    'content' => 'You are a helpful support assistant. Keep answers short, clear, and friendly.',
+                ],
+            ])->concat($history->map(fn (Message $message) => [
+                'role' => $message->role,
+                'content' => $message->content,
+            ]))->all();
+
             $payload = [
                 'model' => 'llama3',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => 'You are a helpful support assistant. Keep answers short, clear, and friendly.',
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $userMessage,
-                    ],
-                ],
+                'messages' => $payloadMessages,
                 'stream' => false,
             ];
 
-            // Send request to Ollama API
             $response = Http::timeout(120)->post('http://localhost:11434/api/chat', $payload);
 
-            // Check if the request was successful
-            if ($response->successful()) {
-                $data = $response->json();
-
-                // Extract the answer from the response: prefer message.content, fallback to response
-                $answer = $data['message']['content'] ?? ($data['response'] ?? 'Sorry, I couldn\'t generate a response.');
-
-                return response()->json(['answer' => $answer]);
-            } else {
-                // Handle API failure
-                return response()->json(['error' => 'AI service is currently unavailable. Please try again later.'], 503);
+            if (! $response->successful()) {
+                return response()->json([
+                    'error' => 'AI service is currently unavailable. Please try again later.',
+                ], 503);
             }
+
+            $data = $response->json();
+
+            $answer = Arr::get($data, 'message.content')
+                ?? Arr::get($data, 'response')
+                ?? 'The assistant could not generate a response right now.';
+
+            $conversation->messages()->create([
+                'role' => 'assistant',
+                'content' => $answer,
+            ]);
+
+            return response()->json(['answer' => $answer]);
         } catch (ValidationException $e) {
-            // Handle validation errors
-            return response()->json(['error' => 'Invalid input: ' . $e->getMessage()], 422);
+            return response()->json([
+                'error' => 'Invalid input: '.$e->getMessage(),
+            ], 422);
         } catch (\Exception $e) {
-            // Handle general exceptions
-            return response()->json(['error' => 'An unexpected error occurred. Please try again.'], 500);
+            return response()->json([
+                'error' => 'An unexpected error occurred. Please try again.',
+            ], 500);
         }
+    }
+
+    /**
+     * Clear the current session conversation history.
+     */
+    public function clear(Request $request)
+    {
+        $sessionId = $request->session()->getId();
+
+        $conversation = Conversation::where('session_id', $sessionId)->first();
+
+        if ($conversation) {
+            $conversation->messages()->delete();
+            $conversation->delete();
+        }
+
+        return response()->json(['status' => 'cleared']);
     }
 }
