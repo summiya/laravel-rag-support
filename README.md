@@ -1,4 +1,4 @@
-# Kahunas RAG
+#  AI RAG Support System
 
 AI-powered support assistant built with Laravel, Ollama, PostgreSQL, pgvector, and Retrieval-Augmented Generation (RAG).
 
@@ -6,7 +6,7 @@ AI-powered support assistant built with Laravel, Ollama, PostgreSQL, pgvector, a
 
 # Overview
 
-Kahunas RAG is a scalable AI support platform designed to provide intelligent, context-aware customer support using local LLMs and vector search.
+ RAG is a scalable AI support platform designed to provide intelligent, context-aware customer support using local LLMs and vector search.
 
 The system combines:
 
