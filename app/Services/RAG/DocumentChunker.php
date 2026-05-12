@@ -28,6 +28,14 @@ class DocumentChunker
             return [$text];
         }
 
+        // If only one sentence and it contains commas, split on commas and treat each as separate chunk
+        if (count($sentences) === 1 && str_contains($sentences[0], ',')) {
+            $commaItems = array_map('trim', explode(',', $sentences[0]));
+            $chunks = array_filter($commaItems, fn ($item) => $item !== '');
+
+            return $chunks;
+        }
+
         $chunks = [];
         $current = '';
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Services\RAG\RetrievalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class SupportChatController extends Controller
     /**
      * Handle the chat request and persist user/assistant history.
      */
-    public function chat(Request $request)
+    public function chat(Request $request, RetrievalService $retrievalService)
     {
         try {
             $request->validate([
@@ -63,10 +64,19 @@ class SupportChatController extends Controller
                 ->reverse()
                 ->values();
 
+            $retrievedChunks = $retrievalService->retrieve($userMessage);
+            $context = $retrievalService->buildContext($retrievedChunks);
+
+            $systemPrompt = 'You are a helpful support assistant. Answer ONLY using the provided company knowledge for the latest user message. If previous messages mention a different product or topic, do not reuse that older topic unless the latest user message asks for it. If the answer is not in the knowledge, say "I could not find this information in the knowledge base."';
+
+            if ($context !== 'No relevant knowledge found.') {
+                $systemPrompt .= "\n\nCompany knowledge:\n".$context;
+            }
+
             $payloadMessages = collect([
                 [
                     'role' => 'system',
-                    'content' => 'You are a helpful support assistant. Keep answers short, clear, and friendly.',
+                    'content' => $systemPrompt,
                 ],
             ])->concat($history->map(fn (Message $message) => [
                 'role' => $message->role,
